@@ -13,13 +13,13 @@ The files are exactly what the installer's own wizard writes, so the easiest way
 | `user_configuration.json` | Yes | Disk, hostname, timezone, keyboard |
 | `user_credentials.json` | Yes, unless using `defer-provisioning` | Username and password hash |
 | `defer-provisioning` | Alternative to credentials | Empty file that defers user setup to first boot |
-| `user_full_name.txt` | No | Git full name |
-| `user_email_address.txt` | No | Git email |
 | `user_encrypt_installation.txt` | No | `true` when the configuration carries a `disk_encryption` block |
 | `authorized_keys` | No | SSH public keys, one per line |
 | `tailscale_authkey` | No | Tailscale auth key for joining your tailnet on first boot |
 
 Generate the password hash for `user_credentials.json` with `openssl passwd -6 "yourpassword"`.
+
+The name and email for git commits aren't part of the install. Set them once the machine is up, over SSH for example, with `omarchy setup git --name "Jane Doe" --email jane@example.com`.
 
 You can also drop in an empty file named `defer-provisioning` in place of `user_credentials.json`. That runs the same [prepare-for-another-owner install](02-getting-started.md) you can trigger interactively: the machine installs with no personal details, and whoever boots it first picks their keyboard and creates their user. That's the mode for imaging rigs, where the drive shouldn't carry anyone's credentials at all.
 
@@ -36,7 +36,7 @@ Any filesystem with the right label works. A tiny ISO is the easy way:
 ```bash
 mkdir cidata
 cp user_configuration.json cidata/
-for file in user_credentials.json defer-provisioning user_full_name.txt user_email_address.txt user_encrypt_installation.txt authorized_keys tailscale_authkey; do
+for file in user_credentials.json defer-provisioning user_encrypt_installation.txt authorized_keys tailscale_authkey; do
   if [[ -f $file ]]; then
     cp "$file" cidata/
   fi
